@@ -13,11 +13,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Description
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.MenuBook
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,18 +36,21 @@ import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-private data class NavDestination(val label: String, val icon: ImageVector)
+/** [icon] is the outline glyph for resting tabs, [activeIcon] the filled one under the lens (as in iOS). */
+private data class NavDestination(val label: String, val icon: ImageVector, val activeIcon: ImageVector)
 
 // Same four tabs as the iPhone reference screenshot.
 private val DESTINATIONS = listOf(
-    NavDestination("Dashboard", Icons.Filled.Home),
-    NavDestination("Diary", Icons.AutoMirrored.Filled.List),
-    NavDestination("Library", Icons.Filled.Star),
-    NavDestination("Settings", Icons.Filled.Settings),
+    NavDestination("Dashboard", Icons.Outlined.Home, Icons.Filled.Home),
+    NavDestination("Diary", Icons.Outlined.Description, Icons.Filled.Description),
+    NavDestination("Library", Icons.Outlined.MenuBook, Icons.Filled.MenuBook),
+    NavDestination("Settings", Icons.Outlined.Settings, Icons.Filled.Settings),
 )
 
 private val BAR_HEIGHT = 64.dp
@@ -103,7 +110,7 @@ fun GlassNavBar(
                 .clickable(onClick = onAction),
             contentAlignment = Alignment.Center,
         ) {
-            Icon(Icons.Filled.Add, contentDescription = "Añadir", tint = Color.White, modifier = Modifier.size(30.dp))
+            Icon(Icons.Rounded.Add, contentDescription = "Añadir", tint = Color.White, modifier = Modifier.size(30.dp))
         }
     }
 }
@@ -139,12 +146,14 @@ private fun RowScope.NavItem(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Icon(item.icon, contentDescription = null, tint = color, modifier = Modifier.size(24.dp))
+        Icon(if (hovered) item.activeIcon else item.icon, contentDescription = null, tint = color, modifier = Modifier.size(26.dp))
         Text(
             item.label,
             color = color,
             fontSize = 11.sp,
             fontWeight = if (hovered) FontWeight.SemiBold else FontWeight.Medium,
+            // A faint dark halo so white and blue text stay readable over bright backdrops.
+            style = TextStyle(shadow = Shadow(Color.Black.copy(alpha = 0.35f), blurRadius = 4f)),
         )
     }
 }

@@ -9,11 +9,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Description
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.MenuBook
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -27,13 +31,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 
-private data class NavDestination(val label: String, val icon: ImageVector)
+/** [icon] is the outline glyph for resting tabs, [activeIcon] the filled one under the lens (as in iOS). */
+private data class NavDestination(val label: String, val icon: ImageVector, val activeIcon: ImageVector)
 
 private val DESTINATIONS = listOf(
-    NavDestination("Dashboard", Icons.Filled.Home),
-    NavDestination("Diary", Icons.AutoMirrored.Filled.List),
-    NavDestination("Library", Icons.Filled.Star),
-    NavDestination("Settings", Icons.Filled.Settings),
+    NavDestination("Dashboard", Icons.Outlined.Home, Icons.Filled.Home),
+    NavDestination("Diary", Icons.Outlined.Description, Icons.Filled.Description),
+    NavDestination("Library", Icons.Outlined.MenuBook, Icons.Filled.MenuBook),
+    NavDestination("Settings", Icons.Outlined.Settings, Icons.Filled.Settings),
 )
 
 private val SELECTED = Color(0xFF4C8DFF)
@@ -83,7 +88,7 @@ fun GlassNavBar(
                         NavigationBarItem(
                             selected = index == hovered,
                             onClick = { onSelect(index) },
-                            icon = { Icon(item.icon, contentDescription = item.label) },
+                            icon = { Icon(if (index == hovered) item.activeIcon else item.icon, contentDescription = item.label) },
                             label = { Text(item.label) },
                             colors = NavigationBarItemDefaults.colors(
                                 selectedIconColor = SELECTED,
@@ -106,7 +111,7 @@ fun GlassNavBar(
                 .clickable(onClick = onAction),
             contentAlignment = Alignment.Center,
         ) {
-            Icon(Icons.Filled.Add, contentDescription = "Añadir", tint = Color.White, modifier = Modifier.size(30.dp))
+            Icon(Icons.Rounded.Add, contentDescription = "Añadir", tint = Color.White, modifier = Modifier.size(30.dp))
         }
     }
 }

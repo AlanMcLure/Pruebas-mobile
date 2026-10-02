@@ -1,5 +1,6 @@
 import 'dart:ui' as ui;
 
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
 
 import 'glass_surface.dart';
@@ -27,15 +28,15 @@ class GlassNavApp extends StatelessWidget {
 
 enum Variant {
   /// No blur at all: what you get if you just "fake" glass with alpha.
-  translucent('1 Translúcido', GlassStyle(blur: 0, tint: Color(0x9914171C))),
+  translucent('1 Translúcido', GlassStyle(blur: 0, tint: Color(0x8014171C))),
 
   /// Real backdrop blur + saturation boost.
-  blur('2 Blur real', GlassStyle(blur: 14, tint: Color(0x590E1116), saturation: 1.7)),
+  blur('2 Blur real', GlassStyle(blur: 8, tint: Color(0x330E1116), saturation: 1.3)),
 
   /// Blur + refraction and dispersion at the rim (needs Impeller).
   liquid(
     '3 Liquid',
-    GlassStyle(blur: 3, tint: Color(0x380E1116), saturation: 1.5, refraction: 22),
+    GlassStyle(blur: 2, tint: Color(0x290E1116), saturation: 1.3, refraction: 22),
   );
 
   const Variant(this.label, this.style);
@@ -45,10 +46,10 @@ enum Variant {
 }
 
 const _tabs = [
-  TabSpec('Dashboard', Icons.home_rounded),
-  TabSpec('Diary', Icons.article_outlined),
-  TabSpec('Library', Icons.menu_book_rounded),
-  TabSpec('Settings', Icons.settings_outlined),
+  TabSpec('Dashboard', CupertinoIcons.house, CupertinoIcons.house_fill),
+  TabSpec('Diary', CupertinoIcons.doc_text, CupertinoIcons.doc_text_fill),
+  TabSpec('Library', CupertinoIcons.book, CupertinoIcons.book_fill),
+  TabSpec('Settings', CupertinoIcons.gear, CupertinoIcons.gear_solid),
 ];
 
 class GlassNavDemo extends StatefulWidget {
@@ -146,7 +147,7 @@ class _ActionButton extends StatelessWidget {
           child: GlassSurface(
             style: style,
             radius: 32,
-            child: const Center(child: Icon(Icons.add, color: Colors.white, size: 30)),
+            child: const Center(child: Icon(CupertinoIcons.plus, color: Colors.white, size: 28)),
           ),
         ),
       ),

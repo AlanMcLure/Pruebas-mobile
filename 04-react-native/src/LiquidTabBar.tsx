@@ -13,9 +13,14 @@ import { scheduleOnRN } from 'react-native-worklets';
 
 import { GlassSurface, type GlassStyle } from './GlassSurface';
 
+type IconName = keyof typeof Ionicons.glyphMap;
+
 export type TabSpec = {
   label: string;
-  icon: keyof typeof Ionicons.glyphMap;
+  /** Outline glyph for resting tabs. */
+  icon: IconName;
+  /** Filled glyph for the tab under the lens, like iOS tab bars. */
+  activeIcon: IconName;
 };
 
 const SELECTED = '#4C8DFF';
@@ -205,11 +210,16 @@ function TabItem({ spec, selected, hovered, index, pos, press, onSelect }: ItemP
       onAccessibilityTap={onSelect}
     >
       <Animated.View style={[styles.itemContent, scale]}>
-        <Ionicons name={spec.icon} size={24} color={color} />
+        <Ionicons
+          name={hovered ? spec.activeIcon : spec.icon}
+          size={26}
+          color={color}
+          style={styles.shadow}
+        />
         <Text
           numberOfLines={1}
           maxFontSizeMultiplier={1.15}
-          style={[styles.label, { color, fontWeight: hovered ? '600' : '500' }]}
+          style={[styles.label, styles.shadow, { color, fontWeight: hovered ? '600' : '500' }]}
         >
           {spec.label}
         </Text>
@@ -224,8 +234,14 @@ const styles = StyleSheet.create({
   item: { flex: 1 },
   itemContent: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   label: { fontSize: 11 },
+  // A faint dark halo so white and blue glyphs stay readable over bright backdrops.
+  shadow: {
+    textShadowColor: 'rgba(0,0,0,0.35)',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 4,
+  },
   indicator: { position: 'absolute', left: 0, top: 0, bottom: 0 },
-  capsule: { backgroundColor: 'rgba(255,255,255,0.14)' },
+  capsule: { backgroundColor: 'rgba(255,255,255,0.20)' },
   lens: {
     backgroundColor: 'rgba(255,255,255,0.14)',
     borderWidth: 1,

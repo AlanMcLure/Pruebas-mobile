@@ -140,7 +140,20 @@ class _GlassSurfaceState extends State<GlassSurface> {
           child: LayoutBuilder(
             builder: (context, constraints) {
               final filter = _filter(constraints.biggest, dpr);
-              final tint = ColoredBox(color: widget.style.tint);
+              // Tint plus a soft highlight that fades from the top, like light on a glass edge.
+              final tint = DecoratedBox(
+                decoration: BoxDecoration(
+                  color: widget.style.tint,
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.white.withValues(alpha: 0.16),
+                      Colors.white.withValues(alpha: 0),
+                    ],
+                  ),
+                ),
+              );
               return ClipRRect(
                 borderRadius: radius,
                 child: filter == null

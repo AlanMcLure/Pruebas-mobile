@@ -33,15 +33,15 @@ import androidx.compose.ui.unit.sp
 
 private enum class Variant(val label: String, val style: GlassStyle) {
     /** No blur at all: what you get on Android < 12, or if you just "fake" glass with alpha. */
-    Translucent("1 Translúcido", GlassStyle(blur = 0.dp, tint = Color(0xFF14171C).copy(alpha = 0.6f))),
+    Translucent("1 Translúcido", GlassStyle(blur = 0.dp, tint = Color(0xFF14171C).copy(alpha = 0.5f))),
 
     /** Real backdrop blur + saturation boost (API 31+). */
-    Blur("2 Blur real", GlassStyle(blur = 22.dp, tint = Color(0xFF0E1116).copy(alpha = 0.35f), saturation = 1.7f)),
+    Blur("2 Blur real", GlassStyle(blur = 10.dp, tint = Color(0xFF0E1116).copy(alpha = 0.20f), saturation = 1.3f)),
 
     /** Blur + AGSL refraction and dispersion at the rim (API 33+). */
     Liquid(
         "3 Liquid",
-        GlassStyle(blur = 6.dp, tint = Color(0xFF0E1116).copy(alpha = 0.22f), saturation = 1.5f, refraction = 22.dp),
+        GlassStyle(blur = 3.dp, tint = Color(0xFF0E1116).copy(alpha = 0.16f), saturation = 1.3f, refraction = 22.dp),
     ),
 }
 

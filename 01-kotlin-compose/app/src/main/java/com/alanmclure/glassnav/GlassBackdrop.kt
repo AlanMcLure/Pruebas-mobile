@@ -144,6 +144,15 @@ fun Modifier.glassBackdrop(
             }
 
             drawPath(path, style.tint)
+            // Soft highlight that fades from the top, like light on a glass edge.
+            drawPath(
+                path,
+                Brush.verticalGradient(
+                    listOf(Color.White.copy(alpha = 0.16f), Color.Transparent),
+                    startY = 0f,
+                    endY = size.height,
+                ),
+            )
             // Specular rim: bright on top edge, fading toward the bottom, like light catching glass.
             drawPath(
                 path,

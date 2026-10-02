@@ -6,13 +6,21 @@ import 'glass_surface.dart';
 
 @immutable
 class TabSpec {
-  const TabSpec(this.label, this.icon);
+  const TabSpec(this.label, this.icon, [IconData? activeIcon]) : activeIcon = activeIcon ?? icon;
 
   final String label;
+
+  /// Outline glyph for resting tabs.
   final IconData icon;
+
+  /// Filled glyph for the tab under the lens, like iOS tab bars.
+  final IconData activeIcon;
 }
 
 const _selectedColor = Color(0xFF4C8DFF);
+
+/// A faint dark halo so white and blue glyphs stay readable over bright backdrops.
+const _legibility = [Shadow(color: Color(0x59000000), blurRadius: 4)];
 
 /// Glass of the "lens" that lifts out of the bar while it is pressed.
 // No blur on purpose: the lens must keep the icons under it sharp, it only bends them.
@@ -178,7 +186,7 @@ class _LiquidTabBarState extends State<LiquidTabBar> with TickerProviderStateMix
                             opacity: (1 - press).clamp(0.0, 1.0),
                             child: DecoratedBox(
                               decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.14),
+                                color: Colors.white.withValues(alpha: 0.20),
                                 borderRadius: BorderRadius.circular(innerHeight / 2),
                               ),
                             ),
@@ -260,7 +268,7 @@ class _TabItem extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(spec.icon, color: color, size: 24),
+            Icon(hovered ? spec.activeIcon : spec.icon, color: color, size: 26, shadows: _legibility),
             // Labels never wrap or follow huge accessibility text sizes: the bar has a fixed height.
             MediaQuery.withClampedTextScaling(
               maxScaleFactor: 1.15,
@@ -271,6 +279,7 @@ class _TabItem extends StatelessWidget {
                 overflow: TextOverflow.fade,
                 style: TextStyle(
                   color: color,
+                  shadows: _legibility,
                   fontSize: 11,
                   fontWeight: hovered ? FontWeight.w600 : FontWeight.w500,
                 ),

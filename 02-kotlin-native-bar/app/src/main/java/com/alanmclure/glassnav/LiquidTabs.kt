@@ -150,7 +150,7 @@ fun LiquidTabLayer(
                     Modifier
                         .fillMaxSize()
                         .graphicsLayer { alpha = (1f - press).coerceIn(0f, 1f) }
-                        .background(Color.White.copy(alpha = 0.14f), RoundedCornerShape(50))
+                        .background(Color.White.copy(alpha = 0.20f), RoundedCornerShape(50))
                 )
                 // Pressed state: glass lens, slightly enlarged so it "lifts" and magnifies.
                 if (press > 0.01f) {

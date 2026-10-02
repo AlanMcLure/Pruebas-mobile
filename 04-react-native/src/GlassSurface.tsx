@@ -1,4 +1,5 @@
 import { BlurView } from 'expo-blur';
+import { LinearGradient } from 'expo-linear-gradient';
 import type { ReactNode, RefObject } from 'react';
 import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 
@@ -35,11 +36,17 @@ export function GlassSurface({ style, radius, blurTarget, containerStyle, childr
         <BlurView
           blurTarget={blurTarget}
           blurMethod="dimezisBlurViewSdk31Plus"
-          tint="dark"
+          tint="systemUltraThinMaterialDark"
           intensity={style.blur}
           style={StyleSheet.absoluteFill}
         />
       )}
+      {/* Soft highlight that fades from the top, like light on a glass edge. */}
+      <LinearGradient
+        pointerEvents="none"
+        colors={['rgba(255,255,255,0.16)', 'rgba(255,255,255,0)']}
+        style={StyleSheet.absoluteFill}
+      />
       <View
         pointerEvents="none"
         style={[

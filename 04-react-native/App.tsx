@@ -14,18 +14,18 @@ type Variant = { label: string; style: GlassStyle };
 
 const VARIANTS: Variant[] = [
   // No blur at all: what you get if you just "fake" glass with alpha.
-  { label: '1 Translúcido', style: { blur: 0, tint: 'rgba(20,23,28,0.6)' } },
+  { label: '1 Translúcido', style: { blur: 0, tint: 'rgba(20,23,28,0.5)' } },
   // Real backdrop blur (native on iOS/Android, CSS backdrop-filter on web).
-  { label: '2 Blur real', style: { blur: 60, tint: 'rgba(14,17,22,0.35)' } },
+  { label: '2 Blur real', style: { blur: 40, tint: 'rgba(14,17,22,0.2)' } },
   // Blur + the lifted lens on press. Still no refraction: see LiquidTabBar.
-  { label: '3 Lente', style: { blur: 40, tint: 'rgba(14,17,22,0.22)' } },
+  { label: '3 Lente', style: { blur: 30, tint: 'rgba(14,17,22,0.16)' } },
 ];
 
 const TABS: TabSpec[] = [
-  { label: 'Dashboard', icon: 'home' },
-  { label: 'Diary', icon: 'document-text-outline' },
-  { label: 'Library', icon: 'book' },
-  { label: 'Settings', icon: 'settings-outline' },
+  { label: 'Dashboard', icon: 'home-outline', activeIcon: 'home' },
+  { label: 'Diary', icon: 'document-text-outline', activeIcon: 'document-text' },
+  { label: 'Library', icon: 'book-outline', activeIcon: 'book' },
+  { label: 'Settings', icon: 'settings-outline', activeIcon: 'settings' },
 ];
 
 export default function App() {
