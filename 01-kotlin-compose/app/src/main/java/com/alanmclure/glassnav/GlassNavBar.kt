@@ -1,18 +1,17 @@
 package com.alanmclure.glassnav
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
@@ -26,7 +25,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -62,17 +67,32 @@ fun GlassNavBar(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(
+        Box(
             modifier = Modifier
                 .weight(1f)
                 .height(BAR_HEIGHT)
                 .glassBackdrop(backdrop, cornerRadius = BAR_HEIGHT / 2, style = style)
                 .padding(6.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
         ) {
-            DESTINATIONS.forEachIndexed { index, item ->
-                NavItem(item, selected = index == selected, onClick = { onSelect(index) })
+            LiquidTabLayer(
+                backdrop = backdrop,
+                count = DESTINATIONS.size,
+                selected = selected,
+                onSelect = onSelect,
+                indicatorHeight = BAR_HEIGHT - 12.dp,
+                modifier = Modifier.fillMaxSize(),
+            ) { hovered, press ->
+                Row(Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
+                    DESTINATIONS.forEachIndexed { index, item ->
+                        NavItem(
+                            item = item,
+                            selected = index == selected,
+                            hovered = index == hovered,
+                            press = press,
+                            onSelect = { onSelect(index) },
+                        )
+                    }
+                }
             }
         }
         Box(
@@ -88,26 +108,43 @@ fun GlassNavBar(
     }
 }
 
+/**
+ * Pure visuals: touches are handled by [LiquidTabLayer]. [hovered] is the tab currently under the
+ * lens (changes live while dragging); it is magnified a little while the bar is pressed.
+ */
 @Composable
-private fun RowScope.NavItem(item: NavDestination, selected: Boolean, onClick: () -> Unit) {
-    val shape = RoundedCornerShape(26.dp)
-    val color = if (selected) SELECTED else Color.White
+private fun RowScope.NavItem(
+    item: NavDestination,
+    selected: Boolean,
+    hovered: Boolean,
+    press: Float,
+    onSelect: () -> Unit,
+) {
+    val color = if (hovered) SELECTED else Color.White
     Column(
         modifier = Modifier
             .weight(1f)
-            .height(BAR_HEIGHT - 12.dp)
-            .clip(shape)
-            .background(if (selected) Color.White.copy(alpha = 0.14f) else Color.Transparent, shape)
-            .clickable(onClick = onClick),
+            .fillMaxSize()
+            // For TalkBack: the gesture layer owns touch, this keeps the tab actionable.
+            .semantics(mergeDescendants = true) {
+                role = Role.Tab
+                this.selected = selected
+                onClick(label = item.label) { onSelect(); true }
+            }
+            .graphicsLayer {
+                val scale = if (hovered) 1f + 0.08f * press else 1f
+                scaleX = scale
+                scaleY = scale
+            },
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Icon(item.icon, contentDescription = item.label, tint = color, modifier = Modifier.size(24.dp))
+        Icon(item.icon, contentDescription = null, tint = color, modifier = Modifier.size(24.dp))
         Text(
             item.label,
             color = color,
             fontSize = 11.sp,
-            fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium,
+            fontWeight = if (hovered) FontWeight.SemiBold else FontWeight.Medium,
         )
     }
 }

@@ -18,6 +18,19 @@ Una barra flotante tipo píldora sobre contenido muy colorido que se desplaza. A
 
 En pantalla aparece el nivel de API del dispositivo y qué efectos soporta. En dispositivos más antiguos las variantes 2 y 3 caen a la 1.
 
+## Interacción (como la barra de iOS 26)
+
+`LiquidTabs.kt` implementa el gesto, independiente de cómo se dibujen las pestañas:
+
+- **Reposo:** una cápsula plana detrás de la pestaña seleccionada.
+- **Presionar** en cualquier punto de la barra: la cápsula pasa a ser una lente de cristal que crece y refracta el fondo (el mismo shader de la variante "Liquid"), y la pestaña bajo ella se agranda un poco.
+- **Arrastrar:** la lente sigue al dedo con un resorte (va un poco retrasada, con "peso"). La pestaña bajo la lente se resalta en azul en vivo y vibra una vez por cada cambio de pestaña.
+- **Soltar:** la lente rebota hasta la pestaña más cercana y esa pestaña queda seleccionada.
+- **Tocar** sin mover es el mismo gesto sin arrastre.
+- Para TalkBack, cada pestaña mantiene semántica de pestaña con acción de clic.
+
+Lo que **no** replica de iOS: en iOS la lente también refracta/magnifica los iconos y etiquetas de la propia barra; aquí solo refracta el fondo y se agranda la pestaña de debajo. Los valores del resorte y de los tamaños están elegidos a ojo, sin compararlos con el original.
+
 ## Cómo funciona (y por qué no es trivial)
 
 Android **no tiene** un "desenfoca lo que hay detrás de mí" para vistas dentro de una ventana:
@@ -39,6 +52,7 @@ Este código se escribió en un entorno sin Android SDK (la descarga está bloqu
 
 - Que el blur se actualice mientras haces scroll bajo la barra (la barra no se invalida con el scroll; depende de que el `RenderNode` grabado se refresque). Si va a saltos, la salida es añadir un contador de versión como hace Haze.
 - Que el shader AGSL compile (si falla, lanza excepción en la variante 3).
+- El gesto: que arrastrar siga bien al dedo, que no se pierdan eventos y que la vibración se sienta al cambiar de pestaña.
 - Rendimiento: la variante 3 aplica blur + shader en cada fotograma.
 
 ## Cómo ejecutarlo

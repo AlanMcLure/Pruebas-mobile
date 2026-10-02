@@ -6,6 +6,7 @@ Qué comparar con la 01:
 
 - Qué hereda gratis del componente estándar: indicador de selección, ripple, accesibilidad, tamaño.
 - Qué no encaja: `NavigationBar` está pensada como barra de ancho completo y de 80 dp de alto, no como píldora flotante; la hemos recortado con el cristal, pero su layout interno sigue siendo el de Material.
-- El indicador de selección de Material es una píldora detrás del icono (no abarca el texto como en iOS).
+- `NavigationBar` **no** tiene "presionar y arrastrar para cambiar de pestaña". Se lo añadimos con la misma capa de gestos de la 01 (`LiquidTabs.kt`) por encima: su indicador sustituye al de Material y los items estándar solo siguen a la pestaña "hovered". Esto es lo que más interesa comparar: cuánto del componente estándar se mantiene al forzarle el comportamiento de iOS.
+- Los items de Material van con 8 dp de separación, así que el indicador puede desalinearse unos pocos dp respecto al centro de cada pestaña.
 
 Mismas limitaciones y el mismo estado: **sin compilar ni probar**. `applicationId` distinto (`com.alanmclure.glassnav.nativebar`) para instalarla junto a la 01.

@@ -41,8 +41,9 @@ private val ACTION_SIZE = 64.dp
 
 /**
  * Same look as the hand-made bar in 01, but the tabs are the stock Material 3 [NavigationBar].
- * We only give it a transparent container and put the glass behind it, to see how much of the
- * standard component survives (indicator, ripple, a11y, sizing come from Material).
+ * Its container is transparent with the glass behind it. Material has no press-and-drag
+ * selection, so [LiquidTabLayer] adds that on top: its indicator replaces Material's, and the
+ * stock items just follow the "hovered" tab. Sizing, ripple and a11y still come from Material.
  */
 @Composable
 fun GlassNavBar(
@@ -58,29 +59,43 @@ fun GlassNavBar(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        NavigationBar(
+        // The glass goes on this wrapper (not on NavigationBar) so it sits UNDER the lens indicator.
+        Box(
             modifier = Modifier
                 .weight(1f)
                 .glassBackdrop(backdrop, cornerRadius = 40.dp, style = style),
-            containerColor = Color.Transparent,
-            tonalElevation = 0.dp,
-            // Insets are handled by the parent (navigationBarsPadding), not by the bar itself.
-            windowInsets = WindowInsets(0, 0, 0, 0),
         ) {
-            DESTINATIONS.forEachIndexed { index, item ->
-                NavigationBarItem(
-                    selected = index == selected,
-                    onClick = { onSelect(index) },
-                    icon = { Icon(item.icon, contentDescription = item.label) },
-                    label = { Text(item.label) },
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = SELECTED,
-                        selectedTextColor = SELECTED,
-                        indicatorColor = Color.White.copy(alpha = 0.14f),
-                        unselectedIconColor = Color.White,
-                        unselectedTextColor = Color.White,
-                    ),
-                )
+            LiquidTabLayer(
+                backdrop = backdrop,
+                count = DESTINATIONS.size,
+                selected = selected,
+                onSelect = onSelect,
+                indicatorHeight = 64.dp,
+                modifier = Modifier.fillMaxWidth(),
+            ) { hovered, _ ->
+                NavigationBar(
+                    containerColor = Color.Transparent,
+                    tonalElevation = 0.dp,
+                    // Insets are handled by the parent (navigationBarsPadding), not by the bar itself.
+                    windowInsets = WindowInsets(0, 0, 0, 0),
+                ) {
+                    DESTINATIONS.forEachIndexed { index, item ->
+                        NavigationBarItem(
+                            selected = index == hovered,
+                            onClick = { onSelect(index) },
+                            icon = { Icon(item.icon, contentDescription = item.label) },
+                            label = { Text(item.label) },
+                            colors = NavigationBarItemDefaults.colors(
+                                selectedIconColor = SELECTED,
+                                selectedTextColor = SELECTED,
+                                // Material's own indicator is off: LiquidTabLayer draws ours.
+                                indicatorColor = Color.Transparent,
+                                unselectedIconColor = Color.White,
+                                unselectedTextColor = Color.White,
+                            ),
+                        )
+                    }
+                }
             }
         }
         Box(
